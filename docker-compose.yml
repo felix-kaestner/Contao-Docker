@@ -1,0 +1,26 @@
+mysql:
+    image: mysql
+    environment:
+        DEFAULT_PASSWORD: ${password}
+        MYSQL_DATABASE: ${database}
+        MYSQL_ROOT_PASSWORD: ${password}
+
+contao:
+    image: pdir/contao-docker
+    environment:
+        DEFAULT_PASSWORD: ${password}
+        PROJECT_NAME: ${project}
+        KAS_USERNAME: ${kasUsername}
+        KAS_PASSWORD: ${kasPassword}
+        KAS_DOMAIN_NAME: ${kasDomainName}
+        KAS_SUBDOMAIN_NAME: ${project}${kasSubdomainName}
+        KAS_DEV_PATH: ${kasDevPath}
+        FTP_HOST: ${ftpHost}
+        FTP_USER: ${ftpUsername}
+        FTP_PASS: ${ftpPassword}
+    links:
+        - "mysql:mysql"
+    ports:
+        - "80:80"
+    volumes:
+        - ./workspace:/var/www/html/src:ro

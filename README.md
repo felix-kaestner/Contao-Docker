@@ -53,7 +53,7 @@ Deploy to ALLINKL
 
     docker exec --user www-data PROJECT_NAME_contao_1 bash -c "php scripts/deploy-allinkl.php"
 
-Ectension Development
+Extension Development
 ---
 
 1. Develop your bundle in workspace
@@ -72,7 +72,7 @@ MIT
 
 Special Thanks
 --------------
-pdir / digital agentur https://github.com/pdir/contao-docker
-Medialta https://github.com/medialta/docker-contao
-Comolo https://github.com/comolo/contao-docker
-CTSMEDIA https://github.com/ctsmedia/docker-contao
+- pdir https://github.com/pdir/contao-docker
+- Medialta https://github.com/medialta/docker-contao
+- Comolo https://github.com/comolo/contao-docker
+- CTSMEDIA https://github.com/ctsmedia/docker-contao

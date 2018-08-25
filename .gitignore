@@ -53,4 +53,7 @@
 # NodeJs Modules
 /node_modules
 
+# Sass compiler files
+*/*.map
+
 

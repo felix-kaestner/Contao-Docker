@@ -1,26 +1,34 @@
 mysql:
-    image: mysql
-    environment:
-        DEFAULT_PASSWORD: ${password}
-        MYSQL_DATABASE: ${database}
-        MYSQL_ROOT_PASSWORD: ${password}
-
-contao:
-    image: pdir/contao-docker
-    environment:
-        DEFAULT_PASSWORD: ${password}
-        PROJECT_NAME: ${project}
-        KAS_USERNAME: ${kasUsername}
-        KAS_PASSWORD: ${kasPassword}
-        KAS_DOMAIN_NAME: ${kasDomainName}
-        KAS_SUBDOMAIN_NAME: ${project}${kasSubdomainName}
-        KAS_DEV_PATH: ${kasDevPath}
-        FTP_HOST: ${ftpHost}
-        FTP_USER: ${ftpUsername}
-        FTP_PASS: ${ftpPassword}
-    links:
-        - "mysql:mysql"
-    ports:
-        - "80:80"
+    image: mysql:latest
+    container_name: mysql
     volumes:
-        - ./workspace:/var/www/html/src:ro
+      - ./mysql_data/:/var/lib/mysql/
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${password}
+      MYSQL_DATABASE: ${database}
+      MYSQL_USER: conta
+      MYSQL_PASSWORD: ${password}
+      DEFAULT_PASSWORD: ${password}
+      
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports: 
+      - "8080:80"
+    links:
+      - mysql
+    depends_on:
+      - mysql
+
+Contao:
+    image: hojak/contao:4.4-manager 
+    container_name: contao
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    volumes:
+      - html_content:/var/www/html

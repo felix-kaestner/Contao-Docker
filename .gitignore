@@ -49,3 +49,8 @@
 
 # PHPStorm files
 /.idea/*
+
+# NodeJs Modules
+/node_modules
+
+

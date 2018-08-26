@@ -23,5 +23,10 @@ contao:
         - "mysql:mysql"
     ports:
         - "80:80"
+    environment:
+        - RUN_ID=${UID}
+        - XDEBUG=true
+  ##- PHP_VALUE=max_execution_time=90,memory_limit=512M if desired
+  ##- PHP_ADMIN_VALUE=max_execution_time=90,memory_limit=512M if desired
     volumes:
         - ./workspace:/var/www/html/src

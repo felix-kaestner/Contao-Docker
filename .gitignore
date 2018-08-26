@@ -56,4 +56,7 @@
 # Sass compiler files
 */*.map
 
+#Environment Variables
+.env
+
 

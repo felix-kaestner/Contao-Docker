@@ -21,14 +21,23 @@ phpmyadmin:
     depends_on:
       - mysql
 
-Contao:
-    image: hojak/contao:4.4-manager 
-    container_name: contao
-    ports:
-      - "8080:80"
-    depends_on:
-      - mysql
+contao:
+    image: pdir/contao-docker
+    environment:
+        DEFAULT_PASSWORD: ${password}
+        PROJECT_NAME: ${project}
+        KAS_USERNAME: ${kasUsername}
+        KAS_PASSWORD: ${kasPassword}
+        KAS_DOMAIN_NAME: ${kasDomainName}
+        KAS_SUBDOMAIN_NAME: ${project}${kasSubdomainName}
+        KAS_DEV_PATH: ${kasDevPath}
+        FTP_HOST: ${ftpHost}
+        FTP_USER: ${ftpUsername}
+        FTP_PASS: ${ftpPassword}
     links:
-      - mysql
+        - "mysql:mysql"
+    ports:
+        - "80:80"
     volumes:
-      - html_content:/var/www/html
+        - ./workspace:/var/www/html/src:
+        - ./files:/var/www/html/files

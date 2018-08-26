@@ -1,43 +1,27 @@
-    mysql:
-        image: mysql:latest
-        container_name: mysql
-        volumes:
-          - ./mysql_data/:/var/lib/mysql/
-        environment:
-          MYSQL_ROOT_PASSWORD: ${password}
-          MYSQL_DATABASE: ${database}
-          MYSQL_USER: conta
-          MYSQL_PASSWORD: ${password}
-          DEFAULT_PASSWORD: ${password}
+mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${password}
+      MYSQL_USER: ${user}
+      MYSQL_PASSWORD: ${password}
+      DEFAULT_PASSWORD: ${password}
+      MYSQL_DATABASE: ${database}
 
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        container_name: phpmyadmin
-        ports:
-          - "8080:80"
-        links:
-          - mysql
-        depends_on:
-          - mysql
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+    - "mysql:mysql"
+    ports:
+      - "8080:80"
 
-    contao:
-        image: pdir/contao-docker
-        container_name: contao
-        environment:
-            DEFAULT_PASSWORD: ${password}
-            PROJECT_NAME: ${project}
-            KAS_USERNAME: ${kasUsername}
-            KAS_PASSWORD: ${kasPassword}
-            KAS_DOMAIN_NAME: ${kasDomainName}
-            KAS_SUBDOMAIN_NAME: ${project}${kasSubdomainName}
-            KAS_DEV_PATH: ${kasDevPath}
-            FTP_HOST: ${ftpHost}
-            FTP_USER: ${ftpUsername}
-            FTP_PASS: ${ftpPassword}
-        links:
-            - "mysql:mysql"
-        ports:
-            - "80:80"
-        volumes:
-            - ./workspace:/var/www/html/src:
-            - ./files:/var/www/html/files
+contao:
+    image: psitrax/contao
+    container_name: contao
+    links:
+        - "mysql:mysql"
+    ports:
+        - "80:80"
+    volumes:
+        - ./workspace:/var/www/html/src

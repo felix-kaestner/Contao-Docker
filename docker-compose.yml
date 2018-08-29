@@ -2,11 +2,11 @@ mysql:
     image: mysql:latest
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${password}
-      MYSQL_USER: ${user}
-      MYSQL_PASSWORD: ${password}
-      DEFAULT_PASSWORD: ${password}
-      MYSQL_DATABASE: ${database}
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: contao
+      MYSQL_PASSWORD: password
+      DEFAULT_PASSWORD: password
+      MYSQL_DATABASE: contao
 
 phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -24,9 +24,9 @@ contao:
     ports:
         - "80:80"
     environment:
-        - RUN_ID=${UID}
+        - RUN_ID=0
         - XDEBUG=true
-  ##- PHP_VALUE=max_execution_time=90,memory_limit=512M if desired
-  ##- PHP_ADMIN_VALUE=max_execution_time=90,memory_limit=512M if desired
+        - PHP_VALUE=max_execution_time=90,memory_limit=512M if desired
+        - PHP_ADMIN_VALUE=max_execution_time=90,memory_limit=512M if desired
     volumes:
-        - ./workspace:/var/www/html/src
+        - ./workspace:/var/www/src

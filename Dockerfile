@@ -50,6 +50,11 @@ RUN yum install epel-release -y \
 ##Download and Install Contao Managed Edition##
 RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition /var/www/html/ $CONTAO_VERSION
 
+# Link the console cmd
+RUN mkdir /var/www/html/bin \
+    && ln -s /var/www/html/vendor/bin/contao-console /var/www/html/bin/console \
+    && chown -R www-data:www-data /var/www/html/bin/console
+
 ADD rootfs /
 
 # Install Contao Manager

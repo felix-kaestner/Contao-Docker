@@ -9,7 +9,7 @@ ENV TIMEZONE="Europe/Berlin" \
     PHP_ADMIN_VALUE=""
 
 # Set it to a fix version number if you want to run a specific version
-ARG CONTAO_VERSION=~4.4
+ARG CONTAO_VERSION='4.4*'
 
 RUN yum install epel-release -y \
   && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
@@ -47,25 +47,25 @@ RUN yum install epel-release -y \
   && chsh -s /bin/bash apache \
   && yum clean all
 
-RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition:$CONTAO_VERSION /var/www/html/
+##Download and Install Contao Managed Edition##
+RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition /var/www/html/ $CONTAO_VERSION
 
 ADD rootfs /
 
-##Download the Contao Manager##
-RUN wget https://download.contao.org/contao-manager/stable/contao-manager.phar -O /var/www/web \
-  && mv /var/www/web/contao-manager.phar /var/www/web/contao-manager.phar.php
+# Install Contao Manager
+RUN curl -o /var/www/html/web/contao-manager.php -L https://download.contao.org/contao-manager.phar
 
 RUN chown apache /usr/share/httpd
 
 EXPOSE 80
 VOLUME ["/var/www"]
-WORKDIR /var/www
+WORKDIR /var/www/html
 HEALTHCHECK CMD curl -f http://localhost/ || exit 1
 
 ##fix permissions##
 RUN chown -R apache /var/www
 RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
-RUN chown -R www-data:www-data /var/www/web
+RUN chown -R www-data:www-data /var/www/html/web
 
 CMD ["/init"]
 

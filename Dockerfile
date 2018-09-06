@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No

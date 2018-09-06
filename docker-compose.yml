@@ -2,11 +2,11 @@ mysql:
     image: mysql:latest
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: contao
-      MYSQL_PASSWORD: password
-      DEFAULT_PASSWORD: password
-      MYSQL_DATABASE: contao
+        MYSQL_ROOT_PASSWORD: password
+        MYSQL_USER: contao
+        MYSQL_PASSWORD: password
+        DEFAULT_PASSWORD: password
+        MYSQL_DATABASE: contao
 
 phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -14,19 +14,14 @@ phpmyadmin:
     links:
     - "mysql:mysql"
     ports:
-      - "8080:80"
+    - "8080:80"
 
 contao:
-    image: psitrax/contao
+    image: pdir/contao
     container_name: contao
     links:
-        - "mysql:mysql"
+    - "mysql:mysql"
     ports:
-        - "80:80"
-    environment:
-        - RUN_ID=0
-        - XDEBUG=true
-        - PHP_VALUE=max_execution_time=90,memory_limit=512M if desired
-        - PHP_ADMIN_VALUE=max_execution_time=90,memory_limit=512M if desired
-    volumes:
-        - ./workspace:/var/www/src
+    - "80:80"
+   volumes:
+    - ./workspace:/var/www/src

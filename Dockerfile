@@ -1,76 +1,79 @@
-FROM centos:7
-MAINTAINER Felix Kästner
-ENV REFRESHED_AT="2018-03-27"
-ENV TIMEZONE="Europe/Berlin" \
-    RUN_ID="" \
-    RUN_UID=""\
-    XDEBUG="false" \
-    PHP_VALUE="" \
-    PHP_ADMIN_VALUE=""
+FROM ubuntu:xenial
 
+ENV DEBIAN_FRONTEND noninteractive
+ENV INITRD No
 # Set it to a fix version number if you want to run a specific version
-ARG CONTAO_VERSION='4.4*'
+ARG CONTAO_VERSION=~4.4
 
-RUN yum install epel-release -y \
-  && yum -y install https://centos7.iuscommunity.org/ius-release.rpm \
-  && yum upgrade -y \
-  && yum install -y \
-      git \
-      less \
-      vim \
-      wget \
-      net-tools \
-      locales \
-      sendmail \
-      openssl \
-      ca-certificates \
-      bzip2 \
-      httpd \
-      php72u-bcmath \
-      php72u-cli \
-      php72u-fpm \
-      php72u-fpm-httpd \
-      php72u-gd \
-      php72u-pecl-imagick \
-      php72u-intl \
-      php72u-json \
-      php72u-mbstring \
-      php72u-mcryp \
-      php72u-mysqlnd \
-      php72u-snmp \
-      php72u-soap \
-      php72u-xml \
-      php72u-pecl-xdebug \
-  && wget https://getcomposer.org/download/1.6.4/composer.phar -O /usr/bin/composer \
-  && chmod +x /usr/bin/composer \
-  && rm -rf /var/www/* \
-  && chsh -s /bin/bash apache \
-  && yum clean all
+RUN apt-get update
+RUN apt-get install -y curl zip unzip
 
-##Download and Install Contao Managed Edition##
-RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition /var/www/html/ $CONTAO_VERSION
+# Install Nginx Webserver
+RUN apt-get install -y nginx
+# check status of Nginx
+RUN systemctl status nginx
+
+#In order to install php7.2 add PPA repository
+RUN add-apt-repository ppa:ondrej/php
+
+#Install php7.2 including submodules
+RUN apt install php7.2-cli \
+                php7.2-dev \
+                php7.2-fpm \
+                php7.2-curl \
+                php7.2-gd \
+                php7.2-mysql \
+                php7.2-mbstring \
+                php-gettext \
+                php7.2-zip \
+                php7.2-xmlrpc \
+                php7.2-xml \
+                php7.2-intl \
+                php7.2-bz2 \
+                php7.2-json \
+                php7.2-pspell \
+                php7.2-tidy \
+                php-pear \
+                php-redis \
+                mcrypt \
+                php-soap \
+                php-dom
+RUN apt-get install -y php-fpm
+
+#Check php-version
+RUN php -v
+RUN systemctl status php7.2-fpm
+
+#Install other dependencies
+RUN apt-get install -y supervisor
+RUN apt-get install -y mysql-client
+RUN apt-get install -y vim rsync git
+
+#Install Composer and make it global
+RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+
+#Install Contao Managed Edition
+RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition:$CONTAO_VERSION /var/www/html/
 
 # Link the console cmd
 RUN mkdir /var/www/html/bin \
     && ln -s /var/www/html/vendor/bin/contao-console /var/www/html/bin/console \
     && chown -R www-data:www-data /var/www/html/bin/console
 
-ADD rootfs /
-
 # Install Contao Manager
 RUN curl -o /var/www/html/web/contao-manager.php -L https://download.contao.org/contao-manager.phar
 
-RUN chown apache /usr/share/httpd
+# Supervisor
+RUN mkdir -p /var/log/supervisor /run/php
+COPY ./build/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./build/nginx.conf /etc/nginx/sites-enabled/default
 
 EXPOSE 80
-VOLUME ["/var/www"]
 WORKDIR /var/www/html
-HEALTHCHECK CMD curl -f http://localhost/ || exit 1
+HEALTHCHECK CMD curl --fail http://localhost/ || exit 1
 
-##fix permissions##
-RUN chown -R apache /var/www
+CMD ["/usr/bin/supervisord", "-n"]
+
+# Fix permissions
 RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
-RUN chown -R www-data:www-data /var/www/html/web
-
-CMD ["/init"]
-
+RUN chown -R www-data:www-data /var/www/html

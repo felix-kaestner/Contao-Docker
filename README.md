@@ -2,25 +2,21 @@
 Repository for Contao CMS Extension Development as Docker Container
 
 # Contao Docker Container
-- Based on CentOS 7
-- Apache 2.4 (event)
+- Based on Ubuntu 18.04 Bionic Beaver
+- Nginx Webserver
 - PHP 7.2
+- Preinstalled Contao 4.4 LTS Managed Edition
 - Preinstalled Contao-Manager
 - Preinstalled composer
 - adjusted DocumentRoot for Contao 4
 - Configured for Contao CMS
-- Ability to change UID of Apache
-- Init system based on S6
-- Includes some useful tools and presets like git, curl, bashrc and vimrc
-- Xdebug (disabled by default), Imagemagick, php-(bcmath,intl,json,mbstring,mcrypt,mysql,snmp,soap,xml)
+- Includes some useful tools and presets like git, curl, vim and rsync
 
 
 # Quick Start
 ---
 
-copy docker-compose.yml and .env.example to your project folder
-rename .env.example to .env and edit parameter if needed
-and run
+copy docker-compose.yml to your project folder and run
 ```
 docker-compose up -d
 ```

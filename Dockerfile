@@ -2,22 +2,18 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No
-# Set it to a fix version number if you want to run a specific version
-ARG CONTAO_VERSION=~4.4
 
 RUN apt-get update
 RUN apt-get install -y curl zip unzip
 
 # Install Nginx Webserver
 RUN apt-get install -y nginx
-# check status of Nginx
-RUN systemctl status nginx
 
 #In order to install php7.2 add PPA repository
-RUN add-apt-repository ppa:ondrej/php
+# RUN add-apt-repository ppa:ondrej/php
 
 #Install php7.2 including submodules
-RUN apt install php7.2-cli \
+RUN apt install -y php7.2-cli \
                 php7.2-dev \
                 php7.2-fpm \
                 php7.2-curl \
@@ -42,7 +38,6 @@ RUN apt-get install -y php-fpm
 
 #Check php-version
 RUN php -v
-RUN systemctl status php7.2-fpm
 
 #Install other dependencies
 RUN apt-get install -y supervisor
@@ -53,7 +48,7 @@ RUN apt-get install -y vim rsync git
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 #Install Contao Managed Edition
-RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition:$CONTAO_VERSION /var/www/html/
+RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition /var/www/html/ '4.4.*'
 
 # Link the console cmd
 RUN mkdir /var/www/html/bin \

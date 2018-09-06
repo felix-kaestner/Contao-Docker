@@ -9,11 +9,9 @@ RUN apt-get install -y curl zip unzip
 # Install Nginx Webserver
 RUN apt-get install -y nginx
 
-#In order to install php7.2 add PPA repository
-# RUN add-apt-repository ppa:ondrej/php
-
 #Install php7.2 including submodules
-RUN apt install -y php7.2-cli \
+RUN apt install -y php7.2 \
+                php7.2-cli \
                 php7.2-dev \
                 php7.2-fpm \
                 php7.2-curl \
@@ -34,7 +32,6 @@ RUN apt install -y php7.2-cli \
                 mcrypt \
                 php-soap \
                 php-dom
-RUN apt-get install -y php-fpm
 
 #Check php-version
 RUN php -v

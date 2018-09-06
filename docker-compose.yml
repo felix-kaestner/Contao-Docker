@@ -1,27 +1,27 @@
 mysql:
-    image: mysql:latest
+    image: mysql
     container_name: mysql
     environment:
         MYSQL_ROOT_PASSWORD: password
-        MYSQL_USER: contao
-        MYSQL_PASSWORD: password
-        DEFAULT_PASSWORD: password
         MYSQL_DATABASE: contao
+        MYSQL_USER: contao
+        MYSQL_PASSWORD: contao
 
 phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
     links:
-    - "mysql:mysql"
+    - "mysql:db"
     ports:
     - "8080:80"
 
+
 contao:
-    image: pdir/contao
+    image: fkasy/contao
     container_name: contao
     links:
     - "mysql:mysql"
     ports:
     - "80:80"
-   volumes:
-    - ./workspace:/var/www/src
+    volumes:
+    - ./workspace:/var/www/html

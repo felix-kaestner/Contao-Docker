@@ -25,8 +25,8 @@ docker-compose up -d
 
 run the following commands from the shell
 ```
-docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=mypass -e MYSQL_DATABASE=contao mysql
-docker run -d --name contao -p 80:80 --link mysql:mysql psitrax/contao
+docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=contao mysql
+docker run -d --name contao -p 80:80 --link mysql:mysql fkasy/contao
 docker run -d --name contao -p 8080:80 --link mysql:mysql phpmyadmin/phpmyadmin
 ```
 
@@ -42,7 +42,7 @@ Point your browser to `http://127.0.0.1/contao/install` to complete Contao-Insta
 Once you're up and running, you'll arrive at the configuration wizard page. At the `Database connection` step, please enter the following:
 
 - Host: `mysql`
-- Login: `root` or  `project`
+- Login: `root`
 - Password: `password`
 - Database Name: `contao`
 

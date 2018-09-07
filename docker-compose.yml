@@ -1,27 +1,32 @@
-mysql:
-    image: mysql
+version: '3'
+
+services:
+  contao:
+    image: fkasy/contao
+    container_name: contao
+    depends_on:
+    - mysql
+    links:
+    - "mysql:mysql"
+    ports:
+    - "80:80"
+    volumes:
+    - ./src:/var/www/html/src
+
+#Using MySql 5.7 'cause latest image results in error while setting up db in Contao Installtool
+  mysql:
+    image: mysql:5.7
     container_name: mysql
     environment:
-        MYSQL_ROOT_PASSWORD: password
-        MYSQL_DATABASE: contao
-        MYSQL_USER: contao
-        MYSQL_PASSWORD: contao
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: contao
+      MYSQL_USER: contao
+      MYSQL_PASSWORD: contao
 
-phpmyadmin:
+  phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
     links:
     - "mysql:db"
     ports:
     - "8080:80"
-
-
-contao:
-    image: fkasy/contao
-    container_name: contao
-    links:
-    - "mysql:mysql"
-    ports:
-    - "80:80"
-    volumes:
-    - ./workspace:/var/www/html

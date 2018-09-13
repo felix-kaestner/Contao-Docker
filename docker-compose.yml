@@ -11,7 +11,8 @@ services:
     ports:
     - "80:80"
     volumes:
-    - ./src:/var/www/html/src
+    - ./files:/var/www/html/files #files directory for working in Contao-project, e.g. css, javascript, images etc.
+    - ./src:/var/www/html/src #src directory for extension development including a base-bundle for Contao 4
 
 #Using MySql 5.7 'cause latest image results in error while setting up db in Contao Installtool
   mysql:

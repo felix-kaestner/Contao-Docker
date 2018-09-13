@@ -52,30 +52,62 @@ This setup also provides the Contao Manager. You can access it via calling http:
 
 Console
 ---
-
-    docker exec -i -t contao /bin/bash
+-   root
+-      docker exec -i -t contao /bin/bash
+-   www-data
+-      docker exec -it --user www-data contao /bin/bash  
 
 Extension Development
 ---
 
-1. Develop your bundle in workspace
-2.      docker exec --user www-data contao bash -c "composer config repositories.BUNDLENAME path ../workspace"
-3.      docker exec --user www-data contao bash -c "composer require VENDOR/BUNDLENAME:*"
-    OR
-1. Add new volume to docker-composer.yml, maybe root
-2.      - ./:/var/www/html/src:ro
-3.      docker exec --user www-data contao bash -c "composer config repositories.BUNDLENAME path ../workspace"
-4.      docker exec --user www-data contao bash -c "composer require VENDOR/BUNDLENAME:*"
+**Customize (Optional)**
+
+Bundle Development is taking place inside of ./src/ _VENDOR_ / _BUNDLENAME_ . 
+
+This repository provides an example  as fkasy/base-bundle.
+
+To develop your own bundle simply change the vendor and bundle name 
+according to the official [Symfony naming-conventions](https://symfony.com/doc/current/contributing/code/standards.html#naming-conventions) in the following way.
+
+First adjust the following files:
+
+ * `.php_cs.php`
+ * `composer.json`
+ * `phpunit.xml.dist`
+ * `README.md`
+
+Then rename the following files and/or the references to `BaseBundle` in
+the following files:
+
+ * `src/ContaoManager/Plugin.php`
+ * `src/DependencyInjection/FKasyBaseExtension.php`
+ * `src/FKasyBaseBundle.php`
+ * `tests/FKasyBaseBundleTest.php`
+
+Finally add your custom classes and resources.
+
+---
+
+**Install**
+
+Develop your bundle in local directory.
+-      docker exec --user www-data contao bash -c "composer config repositories.BUNDLENAME path ./src/VENDOR/BUNDLENAME"
+-      docker exec --user www-data contao bash -c "composer require VENDOR/BUNDLENAME:dev-master"
+
+
+In case of the example bundle provided which is called fkasy/base-bundle this will be
+-      docker exec --user www-data contao bash -c "composer config repositories.base-bundle path ./src/fkasy/base-bundle"
+-      docker exec --user www-data contao bash -c "composer require fkasy/base-bundle:dev-master"
 
 License
 ---
 
-MIT
+- [MIT](https://github.com/FKasy/Contao/blob/master/LICENSE)
 
 Special Thanks
 --------------
-- pdir https://github.com/pdir/contao-docker
-- psitrax https://github.com/psi-4ward/docker-contao
-- Medialta https://github.com/medialta/docker-contao
-- Comolo https://github.com/comolo/contao-docker
-- CTSMEDIA https://github.com/ctsmedia/docker-contao
+- [pdir](https://github.com/pdir/contao-docker)
+- [psitrax](https://github.com/psi-4ward/docker-contao)
+- [Medialta](https://github.com/medialta/docker-contao)
+- [Comolo](https://github.com/comolo/contao-docker)
+- [CTSMEDIA](https://github.com/ctsmedia/docker-contao)

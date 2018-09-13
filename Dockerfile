@@ -69,3 +69,5 @@ CMD ["/usr/bin/supervisord", "-n"]
 # Fix permissions
 RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
 RUN chown -R www-data:www-data /var/www/html
+
+#fix permission for composer cache

@@ -6,7 +6,8 @@ jobs:
   include:
     - stage: build docker image
       script:
-        - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+        - docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
         - docker build -t $IMAGE .
         - docker tag $IMAGE $DOCKER_USERNAME/$IMAGE
-        - docker images # docker push $DOCKER_USERNAME/$IMAGE
+        - docker images
+        - docker push $DOCKER_USERNAME/$IMAGE

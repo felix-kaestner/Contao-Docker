@@ -57,8 +57,8 @@ RUN curl -o /var/www/html/web/contao-manager.php -L https://download.contao.org/
 
 # Supervisor
 RUN mkdir -p /var/log/supervisor /run/php
-COPY ./build/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./build/nginx.conf /etc/nginx/sites-enabled/default
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./nginx.conf /etc/nginx/sites-enabled/default
 
 EXPOSE 80
 WORKDIR /var/www/html
@@ -69,5 +69,3 @@ CMD ["/usr/bin/supervisord", "-n"]
 # Fix permissions
 RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
 RUN chown -R www-data:www-data /var/www/html
-
-#fix permission for composer cache

@@ -4,6 +4,8 @@ services:
   contao:
     image: fkasy/contao
     container_name: contao
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
     - mysql
     links:
@@ -17,12 +19,12 @@ services:
 #Using MySql 5.7 'cause latest image results in error while setting up db in Contao Installtool
   mysql:
     image: mysql:5.7
-    container_name: mysql
+    container_name: mysql_2
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: contao
-      MYSQL_USER: contao
-      MYSQL_PASSWORD: contao
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

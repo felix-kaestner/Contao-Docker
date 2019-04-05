@@ -1,6 +1,8 @@
 # Contao
 Repository for Contao CMS Extension Development as Docker Container
 
+[![Build Status](https://travis-ci.org/FKasy/Contao-Docker.svg?branch=master)](https://travis-ci.org/FKasy/Contao-Docker)
+
 # Contao Docker Container
 - Based on Ubuntu 18.04 Bionic Beaver
 - Nginx Webserver

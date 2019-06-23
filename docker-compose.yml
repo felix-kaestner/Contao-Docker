@@ -2,24 +2,31 @@ version: '3'
 
 services:
   contao:
-    image: fkasy/contao
-    container_name: contao
+    image: fkasy/contao:latest # Use lates auto generated build from Felix Kästner (FKasy)
+    container_name: contao_${PROJECT}
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SSH_AUTH_SOCK: /ssh-agent # Local SSH-Agent
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Mysql Root Password
+      MYSQL_DATABASE: ${MYSQL_DATABASE} # Mysql Database
+      SSH_USER: ${SSH_USER} # SSH User Name, used for deployer
+      SSH_HOST: ${SSH_HOST} # SSH Host, used for deployer
+      SSH_DEPLOY_PATH: ${SSH_DEPLOY_PATH} # SSH Deployment Path, used for deployer
+      PROJECT: ${PROJECT} # Project Name, used to set application name in composer.json
     depends_on:
     - mysql
     links:
     - "mysql:mysql"
     ports:
-    - "80:80"
+    - "80:80" # default port in browser localhost:80 == localhost
+    - "5000:5000" # Access VS Code on localhost:5000
     volumes:
-    - ./files:/var/www/html/files #files directory for working in Contao-project, e.g. css, javascript, images etc.
-    - ./src:/var/www/html/src #src directory for extension development including a base-bundle for Contao 4
+      - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+      - ./src:/var/www/html/src #src directory for extension development including a base-bundle for Contao 4
 
 #Using MySql 5.7 'cause latest image results in error while setting up db in Contao Installtool
   mysql:
     image: mysql:5.7
-    container_name: mysql_2
+    container_name: mysql_${PROJECT}
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -28,8 +35,8 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: phpmyadmin_${PROJECT}
     links:
-    - "mysql:db"
+      - "mysql:db" # Get Database linked from host mysql, phpadmin container uses host db by default, which gets linked to mysql
     ports:
-    - "8080:80"
+      - "8080:80" # Access phpmyadmin Interface by visiting localhost:8080

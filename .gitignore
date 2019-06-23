@@ -4,6 +4,10 @@
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 
+# App config
+!/app/config/config.yml
+!/app/config/parameters.yml
+
 # Email spool folder
 /app/spool/*
 
@@ -14,10 +18,6 @@
 !var/cache/.gitkeep
 !var/logs/.gitkeep
 !var/sessions/.gitkeep
-
-# Parameters
-/app/config/parameters.yml
-/app/config/parameters.ini
 
 # Managed by Composer
 /app/bootstrap.php.cache
@@ -30,6 +30,19 @@
 # Assets and user uploads
 /web/bundles/
 /web/uploads/
+/web/
+!/web/.htaccess
+/assets/
+
+# Generated folders
+/system/*
+/system/modules/*/.skip
+!/system/config/
+/system/config/tcpdf.php
+!/system/config/localconfig.php
+
+# Contao Manager
+/contao-manager/
 
 # PHPUnit
 /app/phpunit.xml
@@ -58,3 +71,6 @@
 
 #Environment Variables
 .env
+
+# Visual Studio Code
+.vscode

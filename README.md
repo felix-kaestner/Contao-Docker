@@ -13,6 +13,7 @@ Repository for Contao CMS Extension Development as Docker Container
 - adjusted DocumentRoot for Contao 4
 - Configured for Contao CMS
 - Includes some useful tools and presets like git, curl, vim and rsync
+- Preinstalled Visual Studio Code Editor inside the docker container, ready to use
 
 
 # Quick Start
@@ -58,6 +59,38 @@ Console
 -      docker exec -i -t contao /bin/bash
 -   www-data
 -      docker exec -it --user www-data contao /bin/bash  
+
+
+Visual Studio Code Editor
+---
+Point your browser to `http://127.0.0.1:5000` to use the Visual Studio Code Editor.
+It is preinstalled and executed upon server start. This great feature is achieved through
+[Code-Server](https://github.com/cdr/code-server). Please head to their site to support the
+project. This enables use to have a complete development environment inside the docker container
+which is easy to scale and adjusts to individual needs.
+
+If you already use Visual Studio Code on your local machine and which to get all your installed
+extensions also to this docker instace, simply execute:
+- Linux and MacOS:
+```bash
+code --list-extensions | xargs -L 1 echo code --install-extension
+```
+- Windows (PowerShell, e. g. using VSCode's integrated Terminal):
+```bash
+code --list-extensions | % { "code --install-extension $_" }
+```
+
+- Copy the produced output from the command line.
+- Open `http://127.0.0.1:5000` in your browser of choice.
+- Click on the `terminal` tab and the select `new terminal`.
+- Paste the commands and hit enter ! All your Extension are installed.
+
+If you wish, you can also copy all your settings, i.e your settings.json or the .vscode directory
+from a local folder into docker container. Simply refer to the commad:
+
+```bash
+docker cp ${path_to_your_local_machine} contao_${PROJECT}:${path_inside_docker_container}
+```
 
 Extension Development
 ---
@@ -108,6 +141,7 @@ License
 
 Special Thanks
 --------------
+- [Coder Technologies Inc.](https://github.com/cdr/code-server)
 - [pdir](https://github.com/pdir/contao-docker)
 - [psitrax](https://github.com/psi-4ward/docker-contao)
 - [Medialta](https://github.com/medialta/docker-contao)

@@ -6,7 +6,7 @@ Repository for Contao CMS Extension Development as Docker Container
 # Contao Docker Container
 - Based on Ubuntu 18.04 Bionic Beaver
 - Nginx Webserver
-- PHP 7.2
+- PHP 7.3
 - Preinstalled Contao 4.4 LTS Managed Edition
 - Preinstalled Contao-Manager
 - Preinstalled composer

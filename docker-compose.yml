@@ -20,8 +20,12 @@ services:
     - "80:80" # default port in browser localhost:80 == localhost
     - "5000:5000" # Access VS Code on localhost:5000
     volumes:
-      - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
-      - ./src:/var/www/html/src #src directory for extension development including a base-bundle for Contao 4
+    - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+    - ./app/Resources/:/var/www/html/app/Resources/ # Use Resources Folder to make changes in contao installation (DCA, templates, languages)
+    - ./files/:/var/www/html/files/ # Files Directory, e.g. images, assets, documents
+    - ./src/:/var/www/html/src/ # Use the src folder, for local extensions loaded via path in composer
+    - ./system/config/:/var/www/html/system/config/ # Folder for self installed contao modules
+    - ./templates/:/var/www/html/templates/ # Template folder for static templates, use app/Resources/contao/templates otherwise
 
 #Using MySql 5.7 'cause latest image results in error while setting up db in Contao Installtool
   mysql:

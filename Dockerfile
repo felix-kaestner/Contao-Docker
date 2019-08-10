@@ -14,27 +14,27 @@ RUN apt-get install -y nginx
 
 #Install php7.2 including submodules
 RUN apt-get install -y php7.3 \
-                php7.3-cli \
-                php7.3-dev \
-                php7.3-fpm \
-                php7.3-curl \
-                php7.3-gd \
-                php7.3-mysql \
-                php7.3-mbstring \
-                php7.3-gettext \
-                php7.3-zip \
-                php7.3-xmlrpc \
-                php7.3-xml \
-                php7.3-intl \
-                php7.3-bz2 \
-                php7.3-json \
-                php7.3-pspell \
-                php7.3-tidy \
-                php-pear \
-                php7.3-redis \
-                mcrypt \
-                php7.3-soap \
-                php7.3-dom
+    php7.3-cli \
+    php7.3-dev \
+    php7.3-fpm \
+    php7.3-curl \
+    php7.3-gd \
+    php7.3-mysql \
+    php7.3-mbstring \
+    php7.3-gettext \
+    php7.3-zip \
+    php7.3-xmlrpc \
+    php7.3-xml \
+    php7.3-intl \
+    php7.3-bz2 \
+    php7.3-json \
+    php7.3-pspell \
+    php7.3-tidy \
+    php-pear \
+    php7.3-redis \
+    mcrypt \
+    php7.3-soap \
+    php7.3-dom
 
 # Install Command Line JSON parser
 RUN apt-get install -y jq
@@ -64,8 +64,8 @@ RUN curl -o /var/www/html/web/contao-manager.php -L https://download.contao.org/
 # Install code-server, a portable version of vscode editor
 RUN cd /var/www/html \
     && curl -s https://api.github.com/repos/cdr/code-server/releases/latest \
-        | jq -r ".assets[] | select(.name | test(\"linux-x64.tar.gz\")) | .browser_download_url" \
-        | wget -i- \
+    | jq -r ".assets[] | select(.name | test(\"linux-x64.tar.gz\")) | .browser_download_url" \
+    | wget -i- \
     && tar xfz code-server* \
     && mv code-server*/code-server /usr/bin/code-server \
     && find . -type d -name "code-server*" -exec rm -rf {} + \
@@ -75,6 +75,9 @@ RUN cd /var/www/html \
 RUN mkdir -p /var/log/supervisor /run/php
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./nginx.conf /etc/nginx/sites-enabled/default
+
+#Scripts
+COPY ./scripts var/www/html/scripts
 
 EXPOSE 80 8443 5000
 WORKDIR /var/www/html

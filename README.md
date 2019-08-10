@@ -15,9 +15,25 @@ Repository for Contao CMS Extension Development as Docker Container
 - Includes some useful tools and presets like git, curl, vim and rsync
 - Preinstalled Visual Studio Code Editor inside the docker container, ready to use
 
-
 # Quick Start
 ---
+
+create a file called `.env` in your project folder with the following content:
+
+```dotenv
+PROJECT=project
+
+MYSQL_DATABASE=d0123abc
+MYSQL_USER=d0123abc
+MYSQL_PASSWORD=GeHeIm
+MYSQL_ROOT_PASSWORD=SuPaGeHeIm
+```
+
+Afterwards, you can export all of these environment variables so they are available for shell commands
+
+```bash
+export $(cat .env | xargs)
+```
 
 copy docker-compose.yml to your project folder and run
 ```
@@ -56,9 +72,9 @@ This setup also provides the Contao Manager. You can access it via calling http:
 Console
 ---
 -   root
--      docker exec -i -t contao /bin/bash
+-      docker exec -i -t contao bash
 -   www-data
--      docker exec -it --user www-data contao /bin/bash  
+-      docker exec -it --user www-data contao bash  
 
 
 Visual Studio Code Editor
@@ -85,54 +101,28 @@ code --list-extensions | % { "code --install-extension $_" }
 - Click on the `terminal` tab and the select `new terminal`.
 - Paste the commands and hit enter ! All your Extension are installed.
 
-If you wish, you can also copy all your settings, i.e your settings.json or the .vscode directory
-from a local folder into docker container. Simply refer to the commad:
+Commands
+---
+To get the database BackUp, when you are operating from the shell within your contao container, execute
+```bash
+mysqldump -h mysql_${PROJECT} -u root -p${MYSQL_ROOT_PASSWORD}  ${MYSQL_DATABASE} > db.sql
+```
+This will get you the database backup in the root directory of your contao installation inside the docker container.
+
+To restore the database from a file inside the contao container, when you are operating from the shell within your contao container, execute:
 
 ```bash
-docker cp ${path_to_your_local_machine} contao_${PROJECT}:${path_inside_docker_container}
+mysql -h mysql_${PROJECT} -u root -p${MYSQL_ROOT_PASSWORD}  ${MYSQL_DATABASE} < db.sql
 ```
 
-Extension Development
----
+Again refer to the commands mentioned above to switch to the [shell](#Console) inside you docker container.
 
-**Customize (Optional)**
-
-Bundle Development is taking place inside of ./src/ _VENDOR_ / _BUNDLENAME_ . 
-
-This repository provides an example  as fkasy/base-bundle.
-
-To develop your own bundle simply change the vendor and bundle name 
-according to the official [Symfony naming-conventions](https://symfony.com/doc/current/contributing/code/standards.html#naming-conventions) in the following way.
-
-First adjust the following files:
-
- * `.php_cs.php`
- * `composer.json`
- * `phpunit.xml.dist`
- * `README.md`
-
-Then rename the following files and/or the references to `BaseBundle` in
-the following files:
-
- * `src/ContaoManager/Plugin.php`
- * `src/DependencyInjection/FKasyBaseExtension.php`
- * `src/FKasyBaseBundle.php`
- * `tests/FKasyBaseBundleTest.php`
-
-Finally add your custom classes and resources.
-
----
-
-**Install**
-
-Develop your bundle in local directory.
--      docker exec --user www-data contao bash -c "composer config repositories.BUNDLENAME path ./src/VENDOR/BUNDLENAME"
--      docker exec --user www-data contao bash -c "composer require VENDOR/BUNDLENAME:dev-master"
-
-
-In case of the example bundle provided which is called fkasy/base-bundle this will be
--      docker exec --user www-data contao bash -c "composer config repositories.base-bundle path ./src/fkasy/base-bundle"
--      docker exec --user www-data contao bash -c "composer require fkasy/base-bundle:dev-master"
+If you wish, you can also copy all your settings, i.e your settings.json or the .vscode directory
+and database files from a local folder into docker container. Simply refer to the commad:
+```bash
+docker cp ${path_on_your_local_machine} contao_${PROJECT}:${path_inside_docker_container}
+``` 
+to copy files or whole directories to the docker container. Simply switch around the last two arguments to copy in the opposite direction.
 
 License
 ---

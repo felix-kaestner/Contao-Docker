@@ -71,6 +71,13 @@ RUN cd /var/www/html \
     && find . -type d -name "code-server*" -exec rm -rf {} + \
     && find . -type f -name "*.tar.gz" -exec rm -rf {} +
 
+RUN curl -sL https://deb.nodesource.com/setup_11.x  | bash - 
+RUN apt-get -y install nodejs 
+RUN npm i -g yarn
+RUN node -v
+RUN npm -v
+RUN yarn -v
+
 # Supervisor
 RUN mkdir -p /var/log/supervisor /run/php
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf

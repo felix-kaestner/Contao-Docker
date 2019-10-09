@@ -48,8 +48,8 @@
 /app/phpunit.xml
 /phpunit.xml
 
-# Build data
-# /build/
+# Docker Compose Volume
+www
 
 # Composer PHAR
 /composer.phar
@@ -73,4 +73,5 @@
 .env
 
 # Visual Studio Code
-.vscode
+.vscode/*
+!.vscode/launch.json

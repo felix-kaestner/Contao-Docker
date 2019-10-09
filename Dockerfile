@@ -3,38 +3,27 @@ FROM ubuntu:latest
 ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No
 
-RUN apt-get update
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository ppa:ondrej/php
-RUN apt-get update
-RUN apt-get install -y curl zip unzip wget
+# Cleanup
+RUN apt-get update && apt-get -y upgrade -y && apt-get -y autoremove
+
+# Install common packages
+RUN apt-get install -y software-properties-common curl zip unzip wget gnupg mysql-client vim rsync git
 
 # Install Nginx Webserver
 RUN apt-get install -y nginx
 
-#Install php7.2 including submodules
-RUN apt-get install -y php7.3 \
-    php7.3-cli \
-    php7.3-dev \
-    php7.3-fpm \
-    php7.3-curl \
-    php7.3-gd \
-    php7.3-mysql \
-    php7.3-mbstring \
-    php7.3-gettext \
-    php7.3-zip \
-    php7.3-xmlrpc \
-    php7.3-xml \
-    php7.3-intl \
-    php7.3-bz2 \
-    php7.3-json \
-    php7.3-pspell \
-    php7.3-tidy \
-    php-pear \
-    php7.3-redis \
-    mcrypt \
-    php7.3-soap \
-    php7.3-dom
+# Install PHP 7.3
+RUN add-apt-repository ppa:ondrej/php
+RUN apt-get install -y php7.3 php7.3-dom php7.3-gd php7.3-curl php7.3-intl php7.3-mbstring php7.3-mysql php7.3-xdebug php7.3-fpm
+
+#Check php-modules
+RUN php -m
+
+# Install supervisor
+RUN apt-get install -y supervisor
+
+# Configure xDebug
+COPY xdebug.ini /etc/php/7.3/mods-available/xdebug.ini
 
 # Install Command Line JSON parser
 RUN apt-get install -y jq
@@ -42,21 +31,19 @@ RUN apt-get install -y jq
 #Check php-version
 RUN php -v
 
-#Install other dependencies
-RUN apt-get install -y supervisor
-RUN apt-get install -y mysql-client
-RUN apt-get install -y vim rsync git
-
 #Install Composer and make it global
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 #Install Contao Managed Edition
-RUN rm -rf /var/www/html/ && composer create-project contao/managed-edition /var/www/html/ '4.4.*'
+RUN ls -la /var/www/html
+RUN rm -rf /var/www/html/*
+RUN chown www-data:www-data /var/www/html
+RUN su - www-data -s /bin/bash -c  "composer create-project contao/managed-edition /var/www/html/ '4.4.*'"
 
 # Link the console cmd
 RUN mkdir /var/www/html/bin \
-    && ln -s /var/www/html/vendor/bin/contao-console /var/www/html/bin/console \
-    && chown -R www-data:www-data /var/www/html/bin/console
+   && ln -s /var/www/html/vendor/bin/contao-console /var/www/html/bin/console \
+   && chown -R www-data:www-data /var/www/html/bin/console
 
 # Install Contao Manager
 RUN curl -o /var/www/html/web/contao-manager.php -L https://download.contao.org/contao-manager.phar
@@ -71,8 +58,8 @@ RUN cd /var/www/html \
     && find . -type d -name "code-server*" -exec rm -rf {} + \
     && find . -type f -name "*.tar.gz" -exec rm -rf {} +
 
-RUN curl -sL https://deb.nodesource.com/setup_11.x  | bash - 
-RUN apt-get -y install nodejs 
+RUN curl -sL https://deb.nodesource.com/setup_11.x  | bash -
+RUN apt-get -y install nodejs
 RUN npm i -g yarn
 RUN node -v
 RUN npm -v
@@ -83,18 +70,16 @@ RUN mkdir -p /var/log/supervisor /run/php
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./nginx.conf /etc/nginx/sites-enabled/default
 
-#Scripts
-COPY ./scripts var/www/html/scripts
-
-EXPOSE 80 8443 5000
+EXPOSE 80 5000 9000
 WORKDIR /var/www/html
 HEALTHCHECK CMD curl --fail http://localhost/ || exit 1
 
 CMD ["/usr/bin/supervisord", "-n"]
+VOLUME ["/var/www/html"]
 
 # Fix permissions
 RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
-RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 0777 /var/lib/php/sessions && chown -R www-data:www-data /var/lib/php/sessions
 
 # Copy gitignore template to remote
 COPY .gitignore /var/www/html/.gitignore

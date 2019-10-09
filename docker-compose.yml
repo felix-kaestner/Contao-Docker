@@ -1,17 +1,13 @@
-version: '3'
-
+version: "3.3"
 services:
   contao:
-    image: fkasy/contao:latest # Use lates auto generated build from Felix Kästner (FKasy)
+    #image: fkasy/contao:latest # Use lates auto generated build from Felix Kästner (FKasy)
+    build: .
     container_name: contao_${PROJECT}
     environment:
-      SSH_AUTH_SOCK: /ssh-agent # Local SSH-Agent
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Mysql Root Password
-      MYSQL_DATABASE: ${MYSQL_DATABASE} # Mysql Database
-      SSH_USER: ${SSH_USER} # SSH User Name, used for deployer
-      SSH_HOST: ${SSH_HOST} # SSH Host, used for deployer
-      SSH_DEPLOY_PATH: ${SSH_DEPLOY_PATH} # SSH Deployment Path, used for deployer
-      PROJECT: ${PROJECT} # Project Name, used to set application name in composer.json
+      SSH_AUTH_SOCK: /ssh-agent # Forward the SSH-agent to mounted local SSH-Agent
+      # XDEBUG_CONFIG: "xdebug.idekey='PHPSTORM' xdebug.remote_host=host.docker.internal" 
+      # if you are more advanced you might want to try setting the xdebug config via a environment variable to the docker container
     depends_on:
     - mysql
     links:
@@ -21,13 +17,10 @@ services:
     - "5000:5000" # Access VS Code on localhost:5000
     volumes:
     - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
-    - ./app/Resources/:/var/www/html/app/Resources/ # Use Resources Folder to make changes in contao installation (DCA, templates, languages)
-    - ./files/:/var/www/html/files/ # Files Directory, e.g. images, assets, documents
-    - ./src/:/var/www/html/src/ # Use the src folder, for local extensions loaded via path in composer
-    - ./system/config/:/var/www/html/system/config/ # Folder for self installed contao modules
-    - ./templates/:/var/www/html/templates/ # Template folder for static templates, use app/Resources/contao/templates otherwise
+    - ./xdebug.ini:/etc/php/7.3/mods-available/xdebug.ini # mount xdebug config
+    - ./.vscode/launch.json:/var/www/html/.vscode/launch.json
+    - web:/var/www/html # mount the whole installation as named volume in a sub folder
 
-#Using MySql 5.7 'cause latest image results in error while setting up db in Contao Installtool
   mysql:
     image: mysql:5.7
     container_name: mysql_${PROJECT}
@@ -41,6 +34,14 @@ services:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin_${PROJECT}
     links:
-      - "mysql:db" # Get Database linked from host mysql, phpadmin container uses host db by default, which gets linked to mysql
+      - "mysql:db" # Get Database linked from host mysql, phpmyadmin container uses host db by default, which gets linked to mysql
     ports:
-      - "8080:80" # Access phpmyadmin Interface by visiting localhost:8080
+      - "8080:80" # Access phpmyadmin interface by visiting localhost:8080
+
+volumes:
+  web:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/www
+      o: bind

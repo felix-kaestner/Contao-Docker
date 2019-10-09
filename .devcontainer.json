@@ -1,0 +1,12 @@
+{
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "contao",
+	"workspaceFolder": "/var/www/html",
+	"shutdownAction": "none",
+	"postCreateCommand": " echo 'Created' ",
+	"remote.containers.defaultExtensions": [
+		"felixfbecker.php-intellisense",
+		"felixfbecker.php-debug",
+		"junstyle.php-cs-fixer"
+	]
+}

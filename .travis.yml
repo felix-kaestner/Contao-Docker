@@ -1,13 +1,24 @@
-sudo: true
-language: php
-dist: xenial
+services:
+  - docker
 
-jobs:
-  include:
-    - stage: build docker image
-      script:
-        - docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-        - docker build -t $IMAGE .
-        - docker tag $IMAGE $DOCKER_USERNAME/$IMAGE
-        - docker images
-        - docker push $DOCKER_USERNAME/$IMAGE
+env:
+  - VERSION=4.4
+  - VERSION=4.4 DEMO_VERSION="4.0"
+
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - >
+    if [ -n "${DEMO_VERSION}" ]; then
+      export TAG=${VERSION}-demo;
+    else
+      export TAG=${VERSION};
+    fi
+
+script:
+  - echo "Build image ${DOCKER_USERNAME}/${IMAGE}:${TAG}"
+  - docker build -t contao .
+  - docker tag contao ${DOCKER_USERNAME}/${IMAGE}:${TAG}
+  - docker images
+
+after_success:
+  - docker push ${DOCKER_USERNAME}/${IMAGE}:${TAG}

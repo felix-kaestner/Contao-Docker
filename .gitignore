@@ -75,3 +75,6 @@ www
 # Visual Studio Code
 .vscode/*
 !.vscode/launch.json
+
+www/*
+!www

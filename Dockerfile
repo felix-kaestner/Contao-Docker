@@ -1,4 +1,8 @@
 FROM ubuntu:latest
+LABEL maintainer="Felix Kästner <hello@felix-kaestner.com>"
+
+ARG VERSION=4.4
+ARG DEMO_VERSION
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No
@@ -38,7 +42,7 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/lo
 RUN ls -la /var/www/html
 RUN rm -rf /var/www/html/*
 RUN chown www-data:www-data /var/www/html
-RUN su - www-data -s /bin/bash -c  "composer create-project contao/managed-edition /var/www/html/ '4.4.*'"
+RUN su - www-data -s /bin/bash -c  "composer create-project contao/managed-edition /var/www/html/ '${VERSION}.*'"
 
 # Link the console cmd
 RUN mkdir /var/www/html/bin \
@@ -48,17 +52,20 @@ RUN mkdir /var/www/html/bin \
 # Install Contao Manager
 RUN curl -o /var/www/html/web/contao-manager.php -L https://download.contao.org/contao-manager.phar
 
+# Install Demo
+RUN if [ -n "${DEMO_VERSION}" ] ; then su - www-data -s /bin/bash -c  "composer require --working-dir /var/www/html contao/official-demo:${DEMO_VERSION}" ; fi
+
 # Install code-server, a portable version of vscode editor
 RUN cd /var/www/html \
     && curl -s https://api.github.com/repos/cdr/code-server/releases/latest \
-    | jq -r ".assets[] | select(.name | test(\"linux-x64.tar.gz\")) | .browser_download_url" \
+    | jq -r ".assets[] | select(.name | test(\"linux-x86_64.tar.gz\")) | .browser_download_url" \
     | wget -i- \
     && tar xfz code-server* \
     && mv code-server*/code-server /usr/bin/code-server \
     && find . -type d -name "code-server*" -exec rm -rf {} + \
     && find . -type f -name "*.tar.gz" -exec rm -rf {} +
 
-RUN curl -sL https://deb.nodesource.com/setup_11.x  | bash -
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get -y install nodejs
 RUN npm i -g yarn
 RUN node -v
@@ -78,6 +85,7 @@ CMD ["/usr/bin/supervisord", "-n"]
 VOLUME ["/var/www/html"]
 
 # Fix permissions
+RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
 RUN chmod -R 0777 /var/lib/php/sessions && chown -R www-data:www-data /var/lib/php/sessions
 

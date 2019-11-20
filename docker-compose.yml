@@ -1,25 +1,30 @@
-version: "3.3"
+version: '3.7'
 services:
   contao:
     #image: fkasy/contao:latest # Use lates auto generated build from Felix Kästner (FKasy)
-    build: .
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        VERSION: 4.4
+        DEMO_VERSION: 4.0
     container_name: contao_${PROJECT}
     environment:
       SSH_AUTH_SOCK: /ssh-agent # Forward the SSH-agent to mounted local SSH-Agent
-      # XDEBUG_CONFIG: "xdebug.idekey='PHPSTORM' xdebug.remote_host=host.docker.internal" 
+      # XDEBUG_CONFIG: "xdebug.idekey='PHPSTORM' xdebug.remote_host=host.docker.internal"
       # if you are more advanced you might want to try setting the xdebug config via a environment variable to the docker container
     depends_on:
-    - mysql
+      - mysql
     links:
-    - "mysql:mysql"
+      - 'mysql:mysql'
     ports:
-    - "80:80" # default port in browser localhost:80 == localhost
-    - "5000:5000" # Access VS Code on localhost:5000
+      - '80:80' # default port in browser localhost:80 == localhost
+      - '5000:5000' # Access VS Code on localhost:5000
     volumes:
-    - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
-    - ./xdebug.ini:/etc/php/7.3/mods-available/xdebug.ini # mount xdebug config
-    - ./.vscode/launch.json:/var/www/html/.vscode/launch.json
-    - web:/var/www/html # mount the whole installation as named volume in a sub folder
+      - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+      - ./xdebug.ini:/etc/php/7.3/mods-available/xdebug.ini # mount xdebug config
+      - ./.vscode/launch.json:/var/www/html/.vscode/launch.json
+      # - web:/var/www/html # mount the whole installation as named volume in a sub folder
 
   mysql:
     image: mysql:5.7
@@ -34,9 +39,9 @@ services:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin_${PROJECT}
     links:
-      - "mysql:db" # Get Database linked from host mysql, phpmyadmin container uses host db by default, which gets linked to mysql
+      - 'mysql:db' # Get Database linked from host mysql, phpmyadmin container uses host db by default, which gets linked to mysql
     ports:
-      - "8080:80" # Access phpmyadmin interface by visiting localhost:8080
+      - '8080:80' # Access phpmyadmin interface by visiting localhost:8080
 
 volumes:
   web:

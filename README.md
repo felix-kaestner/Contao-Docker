@@ -18,6 +18,24 @@ Repository for Contao CMS as Docker Container.
 - Includes some useful tools and presets like git, curl, vim and rsync
 - Preinstalled Visual Studio Code Editor inside the docker container, ready to use from browser
 
+# Supported tags
+
+- 4.4, latest
+
+- 4.4-demo
+
+- 4.5
+
+- 4.5-demo
+
+- 4.6
+
+- 4.6-demo
+
+- 4.8
+
+- 4.8-demo
+
 # Quick Start
 
 create a file called `.env` in your project folder with the following content:

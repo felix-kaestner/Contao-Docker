@@ -2,7 +2,7 @@
 
 Repository for Contao CMS as Docker Container.
 
-[![Build Status](https://travis-ci.org/FKasy/Contao-Docker.svg?branch=master)](https://travis-ci.org/FKasy/Contao-Docker)
+[![Build Status](https://travis-ci.org/felix-kaestner/Contao-Docker.svg?branch=master)](https://travis-ci.org/felix-kaestner/Contao-Docker)
 
 # Contao Docker Container
 

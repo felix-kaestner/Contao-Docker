@@ -42,7 +42,7 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/lo
 RUN ls -la /var/www/html
 RUN rm -rf /var/www/html/*
 RUN chown www-data:www-data /var/www/html
-RUN su - www-data -s /bin/bash -c  "composer create-project contao/managed-edition /var/www/html/ '${VERSION}.*'"
+RUN su - www-data -s /bin/bash -c  "composer create-project contao/managed-edition /var/www/html/ '${VERSION}'"
 
 # Link the console cmd
 RUN mkdir /var/www/html/bin \
@@ -59,11 +59,12 @@ RUN if [ -n "${DEMO_VERSION}" ] ; then su - www-data -s /bin/bash -c  "composer 
 RUN cd /var/www/html \
     && curl -s https://api.github.com/repos/cdr/code-server/releases/latest \
     | jq -r ".assets[] | select(.name | test(\"linux-x86_64.tar.gz\")) | .browser_download_url" \
-    | wget -i- \
-    && tar xfz code-server* \
-    && mv code-server*/code-server /usr/bin/code-server \
-    && find . -type d -name "code-server*" -exec rm -rf {} + \
-    && find . -type f -name "*.tar.gz" -exec rm -rf {} +
+    | wget -i-
+
+RUN tar xfz code-server*
+RUN mv code-server*/code-server /usr/bin/code-server
+RUN find . -type d -name "code-server*" -exec rm -rf {} + 
+RUN find . -type f -name "*.tar.gz" -exec rm -rf {} +
 
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get -y install nodejs

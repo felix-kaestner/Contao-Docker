@@ -18,7 +18,7 @@ RUN apt-get install -y nginx
 
 # Install PHP 7.3
 RUN add-apt-repository ppa:ondrej/php
-RUN apt-get install -y php7.3 php7.3-dom php7.3-gd php7.3-curl php7.3-intl php7.3-mbstring php7.3-mysql php7.3-xdebug php7.3-fpm
+RUN apt-get install -y php7.3 php7.3-dom php7.3-gd php7.3-curl php7.3-intl php7.3-mbstring php7.3-mysql php7.3-xdebug php7.3-fpm php7.3-zip
 
 #Check php-modules
 RUN php -m

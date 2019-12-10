@@ -22,7 +22,7 @@ before_script:
 
 script:
   - echo "Build image ${DOCKER_USERNAME}/${IMAGE}:${TAG}"
-  - docker build -t contao .
+  - docker build --build-arg VERSION=${VERSION} --build-arg DEMO_VERSION=${DEMO_VERSION} -t contao .
   - docker tag contao ${DOCKER_USERNAME}/${IMAGE}:${TAG}
   - docker images
 

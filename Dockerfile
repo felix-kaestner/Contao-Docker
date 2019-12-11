@@ -57,12 +57,11 @@ RUN if [ -n "${DEMO_VERSION}" ] ; then su - www-data -s /bin/bash -c  "composer 
 
 # Install code-server, a portable version of vscode editor
 RUN cd /var/www/html \
-    && curl -s https://api.github.com/repos/cdr/code-server/releases/latest \
-    | jq -r ".assets[] | select(.name | test(\"linux-x86_64.tar.gz\")) | .browser_download_url" \
-    | wget -i-
+    && curl -sL $(curl -sL https://api.github.com/repos/cdr/code-server/releases/latest \
+    | jq -r ".assets[] | select(.name | test(\"linux-x86_64.tar.gz\")) | .browser_download_url" ) \
+    | tar -xvz
 
-RUN tar xfz code-server*
-RUN mv code-server*/code-server /usr/bin/code-server
+RUN find . -type f -name "code-server" -exec mv -t /usr/bin {} + 
 RUN find . -type d -name "code-server*" -exec rm -rf {} + 
 RUN find . -type f -name "*.tar.gz" -exec rm -rf {} +
 

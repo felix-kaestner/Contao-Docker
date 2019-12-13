@@ -16,9 +16,9 @@ RUN apt-get install -y software-properties-common curl zip unzip wget gnupg mysq
 # Install Nginx Webserver
 RUN apt-get install -y nginx
 
-# Install PHP 7.3
+# Install PHP 7.4
 RUN add-apt-repository ppa:ondrej/php
-RUN apt-get install -y php7.3 php7.3-dom php7.3-gd php7.3-curl php7.3-intl php7.3-mbstring php7.3-mysql php7.3-xdebug php7.3-fpm php7.3-zip
+RUN apt-get install -y php7.4 php7.4-{dom,gd,curl,intl,mbstring,mysql,xdebug,fpm,zip}
 
 #Check php-modules
 RUN php -m
@@ -27,7 +27,7 @@ RUN php -m
 RUN apt-get install -y supervisor
 
 # Configure xDebug
-COPY xdebug.ini /etc/php/7.3/mods-available/xdebug.ini
+COPY xdebug.ini /etc/php/7.4/mods-available/xdebug.ini
 
 # Install Command Line JSON parser
 RUN apt-get install -y jq
@@ -81,6 +81,14 @@ EXPOSE 80 5000 9000
 WORKDIR /var/www/html
 HEALTHCHECK CMD curl --fail http://localhost/ || exit 1
 
+# copy the entrypoint script for the image
+COPY docker-entrypoint.sh /usr/local/bin/
+
+# ensure the entrypoint is executable
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# set the entrypoint to our custom script
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-n"]
 VOLUME ["/var/www/html"]
 

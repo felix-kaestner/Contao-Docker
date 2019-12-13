@@ -18,7 +18,7 @@ RUN apt-get install -y nginx
 
 # Install PHP 7.4
 RUN add-apt-repository ppa:ondrej/php
-RUN apt-get install -y php7.4 php7.4-{dom,gd,curl,intl,mbstring,mysql,xdebug,fpm,zip}
+RUN apt-get install -y php7.4 php7.4-dom php7.4-gd php7.4-curl php7.4-intl php7.4-mbstring php7.4-mysql php7.4-xdebug php7.4-fpm php7.4-zip
 
 #Check php-modules
 RUN php -m

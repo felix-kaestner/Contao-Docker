@@ -23,6 +23,9 @@ RUN apt-get install -y php7.4 php7.4-dom php7.4-gd php7.4-curl php7.4-intl php7.
 #Check php-modules
 RUN php -m
 
+# Adjust php-fpm conf so that it does not daemonize
+RUN sed -i "/;daemonize = yes/c\daemonize = no" /etc/php/7.4/fpm/php-fpm.conf
+
 # Install supervisor
 RUN apt-get install -y supervisor
 
@@ -93,9 +96,8 @@ CMD ["/usr/bin/supervisord", "-n"]
 VOLUME ["/var/www/html"]
 
 # Fix permissions
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 0777 /tmp && chown -R www-data:www-data /tmp
-RUN chmod -R 0777 /var/lib/php/sessions && chown -R www-data:www-data /var/lib/php/sessions
+RUN chmod -R 0777 /tmp /var/lib/php/sessions  
+RUN chown -R www-data:www-data /var/www/html /var/lib/php/sessions /tmp
 
 # Copy gitignore template to remote
 COPY .gitignore /var/www/html/.gitignore

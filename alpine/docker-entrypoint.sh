@@ -10,12 +10,11 @@ fi
 if [ -n "$USER_ID" ] ; then
   USERID=$(id -u www-data)
   [[ $USERID != "$USER_ID" ]] \
-    && usermod -u $USER_ID www-data \
-    && chown --changes --silent --no-dereference --recursive --from=$USERID:$USERID ${USER_ID}:${GROUP_ID} \
-        /var/www/html \
-        /.composer \
-        /var/run/php-fpm \
-        /var/lib/php/sessions
+    && deluser www-data \
+    && if getent group www-data ; then groupdel www-data; fi \
+    && addgroup -g ${GROUP_ID} -S www-data \
+	  && adduser -u ${USER_ID} -D -S -G www-data www-data \
+    && chown -RhPf ${USER_ID}:${GROUP_ID} /var/www/html /home/www-data
 fi
 
 exec "$@"
